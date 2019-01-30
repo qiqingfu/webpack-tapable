@@ -25,28 +25,4 @@ class SyncLoopHook {
   }
 }
 
-const loophook = new SyncLoopHook(['name'])
-
-let total1 = 0
-let total2 = 0
-
-loophook.tap('sayName', name => {
-  console.log('total1', total1)
-  return total1++ < 2 ? true : undefined
-})
-
-loophook.tap('sayMoney', name => {
-  console.log('total2', total2)
-  return total2++ < 2 ? true : undefined
-})
-
-loophook.call()
-
-/*
-total1 0
-total1 1
-total1 2
-total2 0
-total2 1
-total2 2
-*/
+module.exports = SyncLoopHook

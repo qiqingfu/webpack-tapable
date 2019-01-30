@@ -26,14 +26,4 @@ class SyncHook {
   }
 }
 
-const synchook = new SyncHook(['name'])
-
-synchook.tap('sayName', name => {
-  console.log(name)
-})
-
-synchook.tap('sayMoney', money => {
-  console.log(money)
-})
-
-synchook.call('good')
+module.exports = SyncHook

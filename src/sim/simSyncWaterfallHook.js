@@ -29,15 +29,4 @@ class SyncWaterfallHook {
   }
 }
 
-const waterfallHook = new SyncWaterfallHook(['name'])
-
-waterfallHook.tap('sayName', name => {
-  console.log(name)
-  return 'sayName 函数的返回值'
-})
-
-waterfallHook.tap('sayMoney', money => {
-  console.log(money)
-})
-
-waterfallHook.call('good')
+module.exports = SyncWaterfallHook

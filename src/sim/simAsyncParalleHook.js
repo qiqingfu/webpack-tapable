@@ -12,10 +12,20 @@
       this.cb = null
       this.AsyncHooks = []
       this.doneIndex = 0
+      this.promiseHooks = []
     }
 
     tapAsync(name, callback) {
       this.AsyncHooks.push(callback)
+    }
+
+    // promise 
+    tapPromise(name, promiseCallback) {
+      this.promiseHooks.push(promiseCallback)
+    }
+
+    promise(...args) {
+      return Promise.all(this.promiseHooks.map(promiseHook => promiseHook(...args)))
     }
 
     callAsync(...args) {
@@ -39,21 +49,5 @@
     }
  }
 
- let paralleHook = new AsyncParalleHook('name')
- paralleHook.tapAsync('sayName', (name, done) => {
-  setTimeout(() => {
-    console.log('sayName async', name)
-    done()
-  }, 1000)
- })
+ module.exports = AsyncParalleHook
 
- paralleHook.tapAsync('sayMoney', (name, done) => {
-  setTimeout(() => {
-    console.log('sayMoney async', name)
-    done()
-  }, 3000)
- })
-
- paralleHook.callAsync('qiqingfu', () => {
-   console.log('end!!!!')
- })

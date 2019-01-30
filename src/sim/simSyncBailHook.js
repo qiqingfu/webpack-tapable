@@ -27,15 +27,4 @@ class SyncBailHook {
   }
 }
 
-const bailhook = new SyncBailHook(['name'])
-
-bailhook.tap('sayName', name => {
-  console.log(name, 'name')
-  return true
-})
-
-bailhook.tap('sayMoney', money => {
-  console.log(money, 'money')
-})
-
-bailhook.call('good')
+module.exports = SyncBailHook
