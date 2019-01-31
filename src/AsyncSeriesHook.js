@@ -61,7 +61,7 @@ class Loopen {
 }
 
 const loopen = new Loopen()
-// loopen.tapAsync()
-// loopen.callAsync()
-loopen.tapPromise()
-loopen.promise()
+loopen.tapAsync()
+loopen.callAsync()
+// loopen.tapPromise()
+// loopen.promise()

@@ -12,8 +12,6 @@ class AsyncSeriesHook {
       new Error(`${options} 应该是一个数组类型的参数`)
     }
     this.asyncHooks = []
-    this.asyncIndex = 0
-    this.asyncCb = null
     this.promiseHook = []
   }
 
@@ -22,22 +20,13 @@ class AsyncSeriesHook {
   }
 
   async callAsync(...args) {
-    if (args.length >= 1) {
-      this.asyncCb = args.pop()
-      console.log(this.asyncCb)
-      if (typeof this.asyncCb !== 'function') {
-        throw new Error('callAsync 最后一个参数应该是一个回调函数')
-      }
-    }
-    for (let hook of this.asyncHooks) {
-      await hook(...args, this.done.bind(this))
-    }
-  }
-
-  done() {
-    if (this.asyncIndex++ === this.asyncHooks.length) {
-      this.asyncCb()
-    }
+   let finalCallback = args.pop()
+    let i = 0;
+    let next = () => {
+      let task = this.asyncHooks[i++];
+      task ? task(...args, next) : finalCallback();
+    };
+    next();
   }
 
   // promise 异步串行
