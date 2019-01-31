@@ -3,6 +3,7 @@ const SyncBailHook = require('./simSyncBailHook')
 const SyncLoopHook = require('./simSyncLoopHook')
 const SyncWaterfallHook = require('./simSyncWaterfallHook')
 const AsyncParalleHook = require('./simAsyncParalleHook')
+const AsyncSeriesHook = require('./simAsyncSeriesHook')
 
 
 exports.SyncHook = SyncHook
@@ -10,3 +11,4 @@ exports.SyncBailHook = SyncBailHook
 exports.SyncLoopHook = SyncLoopHook
 exports.SyncWaterfallHook = SyncWaterfallHook
 exports.AsyncParalleHook = AsyncParalleHook
+exports.AsyncSeriesHook = AsyncSeriesHook
