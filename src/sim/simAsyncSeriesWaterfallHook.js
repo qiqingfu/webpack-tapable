@@ -33,24 +33,4 @@ class AsyncSeriesWaterfallHook {
   }
 }
 
-// const seriesWaterfallHook = new AsyncSeriesWaterfallHook(['name'])
-//
-// seriesWaterfallHook.tapAsync('sayName', (name, cb) => {
-//   setTimeout(() => {
-//     console.log('sayName', name)
-//     cb(null, '这是sayName传递过来的参数')
-//   }, 1000)
-// })
-//
-// seriesWaterfallHook.tapAsync('sayMoney', (data, cb) => {
-//   setTimeout(() => {
-//     console.log('sayMoney', data)
-//     cb(null)
-//   }, 1000)
-// })
-//
-// seriesWaterfallHook.callAsync('qiqingfu', () => {
-//   console.log('end!!!')
-// })
-
 module.exports = AsyncSeriesWaterfallHook
