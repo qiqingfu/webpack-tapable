@@ -112,8 +112,89 @@ name qiqingfu
 同步串行瀑布流, 瀑布流指的是第一个监听函数的返回值,做为第二个监听函数的参数。第二个函数的返回值作为第三个监听函数的参数,依次类推... 
 
 ```javascript
+class SyncWaterfallHook {
+	constructor(options) {
+			this.options = options
+		  this.hooks = []
+	}
+	tap(name, callback) {
+		this.hooks.push(callback)
+	}
+	call(...args) {
+		let [firstHook, ...otherHooks] = this.hooks
+		/**
+		 * 通过解构赋值先取出第一个监听函数执行
+		 * 并且将第一个函数的执行结果传递给第二个, 第二个传递给第三个,迭代的过程 
+		 */
+		let ret = firstHook(...args)
+		otherHooks.reduce((f,n) => {
+			return n(f)
+		}, ret)
+	}
+}
 
+const syncWaterfallHook = new SyncWaterfallHook('name')
+
+syncWaterfallHook.tap('name', data => {
+	console.log('name', data)
+	return 23
+})
+syncWaterfallHook.tap('age', data => {
+	console.log('age', data)
+})
+
+syncWaterfallHook.call('qiqingfu')
 ```
+打印结果
+```
+name qiqingfu
+age 23
+``` 
+
+### SyncLoopHook 
+同步串行, 如果监听函数的返回值为 `true`, 则反复执行当前的监听函数,直到返回指为 `undefind`则继续执行下面的监听函数 
+
+```javascript
+class SyncLoopHook {
+  constructor(options) {
+    this.options = options
+    this.hooks = []
+	}
+	tap(name, callback) {
+    this.hooks.push(callback)
+	}
+	call(...args) {
+		for (let i = 0; i < this.hooks.length; i++) {
+			let hook = this.hooks[i], ret
+			do{
+				ret = hook(...args)
+			}while(ret === true && ret !== undefined)
+		}
+	}
+}
+
+const syncLoopHook = new SyncLoopHook('name')
+
+let n1 = 0
+syncLoopHook.tap('name', data => {
+	console.log('name', data)
+	return n1 < 2 ? true : undefined
+})
+syncLoopHook.tap('end', data => {
+	console.log('end', data)
+})
+
+syncLoopHook.call('qiqingfu')
+``` 
+执行结果
+```
+name qiqingfu
+name qiqingfu
+name qiqingfu  第三次打印的时候, n1的指为2, 返回值为 undefined则执行后面的监听函数
+end qiqingfu
+``` 
+
+## 异步钩子 
 
 
 
