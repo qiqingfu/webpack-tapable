@@ -19,7 +19,7 @@ Webpack 在运行中会通过 `tapable` 提供的钩子进行广播事件, 插�
 
 ## Tapable Hook 
 
-Tapable 提供同步(Sync)和异步(Async)钩子类。而异步又分为 `异步串行`、`异步并行`钩子类。 
+Tapable 提供同步(Sync)和异步(Async)钩子类。而异步又分为 `异步串行`、`异步并行`钩子类。 
 
 ![Tapable Hook Class](./common/images/1.png)
 
@@ -34,7 +34,7 @@ Tapable 提供同步(Sync)和异步(Async)钩子类。而异步又分为 `异步
 同步钩子类通过实例的 `tap` 方法监听函数, 通过 `call`发布事件  
 
 ### SyncHook 
-同步串行不关心订阅函数执行后的返回值是什么。其原理是将监听(订阅)的函数存放到一个数组中, 发布时遍历数组中的监听函数并且将发布时的 `arguments`传递给监听函数 
+同步串行不关心订阅函数执行后的返回值是什么。其原理是将监听(订阅)的函数存放到一个数组中, 发布时遍历数组中的监听函数并且将发布时的 `arguments`传递给监听函数 
 
 ```javascript
 class SyncHook {
@@ -95,7 +95,7 @@ const syncbailhook = new SyncBailHook('name')
 
 syncbailhook.tap('name', (data) => {
 	console.log('name', data)
-	return '我的返回值不为null'
+	return '我的返回值不为null'
 })
 syncbailhook.tap('age', (data) => {
 	console.log('age', data)
@@ -152,7 +152,7 @@ age 23
 ``` 
 
 ### SyncLoopHook 
-同步串行, 如果监听函数的返回值为 `true`, 则反复执行当前的监听函数,直到返回指为 `undefind`则继续执行下面的监听函数 
+同步串行, 如果监听函数的返回值为 `true`, 则反复执行当前的监听函数,直到返回指为 `undefind`则继续执行下面的监听函数 
 
 ```javascript
 class SyncLoopHook {
@@ -190,11 +190,8 @@ syncLoopHook.call('qiqingfu')
 ```
 name qiqingfu
 name qiqingfu
-name qiqingfu  第三次打印的时候, n1的指为2, 返回值为 undefined则执行后面的监听函数
+name qiqingfu  第三次打印的时候, n1的指为2, 返回值为 undefined则执行后面的监听函数
 end qiqingfu
 ``` 
 
 ## 异步钩子 
-
-
-
