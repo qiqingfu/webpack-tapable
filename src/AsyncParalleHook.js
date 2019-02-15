@@ -62,8 +62,8 @@ class AsyncLoopen {
 }
 
 const asyncloopen = new AsyncLoopen()
-// asyncloopen.tapAsync()
-// asyncloopen.callAsync()
+asyncloopen.tapAsync()
+asyncloopen.callAsync()
 
-asyncloopen.tapPromise()
-asyncloopen.callPromise()
+// asyncloopen.tapPromise()
+// asyncloopen.callPromise()

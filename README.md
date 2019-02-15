@@ -195,3 +195,152 @@ end qiqingfu
 ``` 
 
 ## 异步钩子 
+ - 异步并行 `(Parallel)`
+   - AsyncParallelHook
+   - AsyncParalleBailHook
+ - 异步串行 `(Series)`
+   - AsyncSeriesHook
+   - AsyncSeriesBailHook
+   - AsyncSeriesWaterfallHook
+
+`凡有异步,必有回调`
+
+同步钩子是通过 `tap`来监听函数的, `call`来发布的。  
+
+异步钩子是通过 `tapAsync` 或 `tapPromise` 来监听函数,通过 `callAsync` 或 `promise`来发布订阅的。  
+
+### AsyncParallelHook 
+异步并行, 监听的函数会一块执行, 哪个函数先执行完就先触发。不需要关心监听函数的返回值。
+
+```javascript
+class AsyncParallelHook {
+	constructor(options) {
+		this.options = options
+		this.asyncHooks = []
+	}
+	// 订阅
+	tapAsync(name, callback) {
+		this.asyncHooks.push(callback)
+	}
+	// 发布
+	callAsync(...args) {
+		/**
+		 * callAsync(arg1, arg2,..., cb)
+		 * 发布的时候最后一个参数可以是回调函数
+		 * 订阅的每一个函数的最后一个参数也是一个回调函数,所有的订阅函数执行完
+		 * 且都调用了最后一个函数,才会执行cb 
+		 */
+    const finalCallback = args.pop()
+		let i = 0
+		// 将这个作为最后一个参数传过去,使用的时候选择性调用
+		const done = () => {
+			++i === this.asyncHooks.length && finalCallback()
+		}
+		this.asyncHooks.forEach(hook => {
+			hook(...args, done)
+		})
+	}
+}
+
+const asyncParallelHook = new AsyncParallelHook('name')
+
+asyncParallelHook.tapAsync('name', (data, done) => {
+	setTimeout(() => {
+    console.log('name', data)
+    done()
+  }, 2000)
+})
+asyncParallelHook.tapAsync('age', (data, done) => {
+	setTimeout(() => {
+    console.log('age', data)
+    done()
+  }, 3000)
+})
+
+console.time('time')
+asyncParallelHook.callAsync('qiqingfu', () => {
+  console.log('监听函数都调用了 done')
+  console.timeEnd('time')
+})
+```
+打印结果 
+```
+name qiqingfu
+age qiqingfu
+监听函数都调用了 done
+time: 3002.691ms
+``` 
+
+### AsyncParalleBailHook 
+
+```
+暂时不理解
+``` 
+
+### AsyncSeriesHook 
+异步串行钩子类, 不关心 `callback`的参数。异步函数一个一个的执行,但是必须调用 done函数。
+
+```javascript
+class AsyncSeriesHook {
+	constructor(options) {
+		this.options = options
+		this.asyncHooks = []
+	}
+	tapAsync(name, callback) {
+		this.asyncHooks.push(callback)
+	}
+	callAsync(...args) {
+		const finalCallback = args.pop()
+		
+		let i = 0
+		const done = () => {
+			let task = this.asyncHooks[i++]
+			task ? task(...args, done) : finalCallback()
+		}
+		done()
+	}
+}
+
+const asyncSeriesHook = new AsyncSeriesHook('name')
+
+asyncSeriesHook.tapAsync('name', (data, done) => {
+	setTimeout(() => {
+		console.log('name', data)
+		done()
+	}, 1000)
+})
+
+asyncSeriesHook.tapAsync('age', (data, done) => {
+	setTimeout(() => {
+		console.log('age', data)
+		done()
+	}, 2000)
+})
+
+console.time('time')
+asyncSeriesHook.callAsync('qiqingfu', () => {
+	console.log('end')
+	console.timeEnd('time')
+})
+``` 
+执行结果
+```
+name qiqingfu
+age qiqingfu
+end
+time: 3010.915ms
+```  
+
+### AsyncSeriesBailHook
+同步串行钩子类, callback的参数如果不是 `null`, 后面所有的异步函数都不会执行,直接执行 `callAsync`方法的回调函数 
+
+```javascript
+
+```
+
+
+
+
+
+
+
