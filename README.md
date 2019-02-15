@@ -335,12 +335,122 @@ time: 3010.915ms
 同步串行钩子类, callback的参数如果不是 `null`, 后面所有的异步函数都不会执行,直接执行 `callAsync`方法的回调函数 
 
 ```javascript
+class AsyncSeriesBailHook {
+	constructor(options) {
+		this.options = options
+		this.asyncHooks = []
+	}
+	tapAsync(name, callback) {
+		this.asyncHooks.push(callback)
+	}
+	callAsync(...args) {
+		const finalCallback = args.pop()
 
+		let i = 0
+		const done = data => {
+      if (data) return finalCallback()
+      let task = this.asyncHooks[i++]
+      task ? task(...args, done) : finalCallback()
+		}
+		done()
+	}
+}
+
+const asyncSeriesBailHook = new AsyncSeriesBailHook('name')
+
+asyncSeriesBailHook.tapAsync('1', (data, done) => {
+	setTimeout(() => {
+		console.log('1', data)
+		done(null)
+	}, 1000)
+})
+
+asyncSeriesBailHook.tapAsync('2', (data, done) => {
+	setTimeout(() => {
+		console.log('2', data)
+		done(null)
+	}, 2000)
+})
+
+console.time('times')
+asyncSeriesBailHook.callAsync('qiqingfu', () => {
+	console.log('end')
+	console.timeEnd('times')
+})
+``` 
+打印结果
 ```
+1 qiqingfu
+2 qiqingfu
+end
+times: 3012.060ms
+``` 
 
+### AsyncSeriesWaterfallHook 
+同步串行钩子类, 上一个监听函数 callback(err, data)的第二个参数, 可以作为下一个监听函数的参数
+```javascript
+class AsyncSeriesWaterfallHook {
+	constructor(options) {
+		this.options = options
+		this.asyncHooks = []
+	}
+	tapAsync(name, callback) {
+		this.asyncHooks.push(callback)
+	}
+	callAsync(...args) {
+		const finalCallback = args.pop()
 
+		let i = 0, once
+		const done = (err, data) => {
+			let task = this.asyncHooks[i++]
+			if (!task) return finalCallback()
+			if (!once) {
+				// 只执行一次
+				task(...args, done)
+				once = true
+			} else {
+				task(data, done)
+			}
+		}
+		done()
+	}
+}
 
+const asyncSeriesWaterfallHook = new AsyncSeriesWaterfallHook('name')
 
+asyncSeriesWaterfallHook.tapAsync('1', (data, done) => {
+	setTimeout(() => {
+		console.log('1', data)
+		done(null, '第一个callback传递的参数')
+	}, 1000)
+})
 
+asyncSeriesWaterfallHook.tapAsync('2', (data, done) => {
+	setTimeout(() => {
+		console.log('2', data)
+		done(null)
+	}, 1000)
+})
 
+console.time('timer')
+asyncSeriesWaterfallHook.callAsync('qiqingfu', () => {
+	console.log('end')
+	console.timeEnd('timer')
+})
+``` 
+打印结果
+```
+1 qiqingfu
+2 第一个callback传递的参数
+end
+timer: 2015.445ms
+``` 
 
+## END 
+如果理解有误, 麻烦纠正! 
+
+## 参考文章
+
+[webpack4.0源码分析之Tapable](https://juejin.im/post/5abf33f16fb9a028e46ec352) 
+
+[webpack 4.0 Tapable 类中的常用钩子函数源码分析](https://www.codercto.com/a/21587.html) 
