@@ -2,13 +2,7 @@
  * 如果订阅的事件处理函数有返回值,且返回的不为undefind,那么就终止并行后面的处理函数的执行。
  */
 
-const {
-  SyncBailHook,
-} = require('tapable')
-
-const {
-  SyncHook
-} = require('tapable')
+const SyncBailHook = require('./sim/simSyncBailHook')
 
 class Loopen {
   constructor() {
@@ -21,7 +15,7 @@ class Loopen {
   tap() {
     this.hooks.argv.tap('sayName', name => {
       console.log(name, 'name')
-      return true   // 这个函数执行的返回值不为 undefind,下面sayMoney事件处理函数不执行
+      return null   // 这个函数执行的返回值不为 null,下面sayMoney事件处理函数不执行
     })
     this.hooks.argv.tap('sayMoney', money => {
       console.log(money, 'money')

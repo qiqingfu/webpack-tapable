@@ -1,6 +1,4 @@
-const {
-  AsyncParallelHook
-} = require('tapable')
+const AsyncParallelHook = require('./sim/simAsyncParalleHook')
 
 class AsyncLoopen {
   constructor() {
@@ -21,7 +19,7 @@ class AsyncLoopen {
       setTimeout(() => {
         console.log('sayMoney, async', name)
         done()
-      }, 2000)
+      }, 4000)
     })
   }
 

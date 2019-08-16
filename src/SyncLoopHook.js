@@ -2,9 +2,7 @@
 * SyncLoopHook 同步串行执行, 如果函数的返回值为 true,则重复执行。直到返回值为 undefine表示继续向下执行
 * */
 
-const {
-  SyncLoopHook
-} = require('tapable')
+const SyncLoopHook = require('./sim/simSyncLoopHook')
 
 class Loopen {
   constructor() {

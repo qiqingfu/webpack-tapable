@@ -1,6 +1,4 @@
-const {
-  SyncHook
-} = require('tapable')
+const SyncHook = require('./sim/simSyncHook')
 
 class Loopen {
   constructor() {

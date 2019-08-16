@@ -3,9 +3,7 @@
 * 同步串行执行, 但是每一个函数的返回值都可以作为下一个函数的参数
 * */
 
-const {
-  SyncWaterfallHook
-} = require('tapable')
+const SyncWaterfallHook = require('./sim/simSyncWaterfallHook')
 
 class Loopen {
   constructor() {
@@ -18,7 +16,7 @@ class Loopen {
   tap() {
     this.hooks.argv.tap('sayName', name => {
       console.log(name)
-      return 'sayName函数的返回值'
+      return '有返回值'
     })
     this.hooks.argv.tap('sayMoney', money => {
       console.log(money)

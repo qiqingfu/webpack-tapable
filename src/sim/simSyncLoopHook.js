@@ -25,18 +25,4 @@ class SyncLoopHook {
   }
 }
 
-// module.exports = SyncLoopHook
-
-const syncLoopHook = new SyncLoopHook('name')
-
-let n1 = 0
-let n2 = 0
-syncLoopHook.tap('name', data => {
-  console.log('name', data)
-	return n1++ < 2 ? true : undefined
-})
-syncLoopHook.tap('end', data => {
-	console.log('end', data)
-})
-
-syncLoopHook.call('qiqingfu')
+module.exports = SyncLoopHook

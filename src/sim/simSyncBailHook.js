@@ -23,7 +23,7 @@ class SyncBailHook {
       } catch (e) {
         new Error('确保要有返回值')
       }
-    } while (!ret)
+    } while (ret === null)
   }
 }
 
